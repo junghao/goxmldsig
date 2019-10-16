@@ -10,8 +10,8 @@ import (
 	"regexp"
 
 	"github.com/beevik/etree"
-	"github.com/russellhaering/goxmldsig/etreeutils"
-	"github.com/russellhaering/goxmldsig/types"
+	"github.com/junghao/goxmldsig/etreeutils"
+	"github.com/junghao/goxmldsig/types"
 )
 
 var uriRegexp = regexp.MustCompile("^#[a-zA-Z_][\\w.-]*$")
@@ -306,7 +306,7 @@ func contains(roots []*x509.Certificate, cert *x509.Certificate) bool {
 func (ctx *ValidationContext) findSignature(el *etree.Element) (*types.Signature, error) {
 	var idAttr *etree.Attr
 	if ctx.IdAttribute != "" {
-		idAttr := el.SelectAttr(ctx.IdAttribute)
+		idAttr = el.SelectAttr(ctx.IdAttribute)
 		if idAttr == nil || idAttr.Value == "" {
 			return nil, errors.New("Missing ID attribute")
 		}

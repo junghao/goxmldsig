@@ -11,7 +11,7 @@ import (
 	"fmt"
 
 	"github.com/beevik/etree"
-	"github.com/russellhaering/goxmldsig/etreeutils"
+	"github.com/junghao/goxmldsig/etreeutils"
 )
 
 type SigningContext struct {
@@ -92,7 +92,7 @@ func (ctx *SigningContext) constructSignedInfo(el *etree.Element, enveloped bool
 
 	if ctx.IdAttribute != "" {
 		dataId := el.SelectAttrValue(ctx.IdAttribute, "")
-		if dataId != "" {
+		if dataId == "" {
 			return nil, errors.New("Missing data ID")
 		}
 		reference.CreateAttr(URIAttr, "#"+dataId)
