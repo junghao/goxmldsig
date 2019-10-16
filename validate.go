@@ -16,6 +16,7 @@ import (
 
 var uriRegexp = regexp.MustCompile("^#[a-zA-Z_][\\w.-]*$")
 var whiteSpace = regexp.MustCompile("\\s+")
+var emptyAttr = etree.Attr{Key: "", Value: ""}
 
 var (
 	// ErrMissingSignature indicates that no enveloped signature was found referencing
@@ -233,9 +234,14 @@ func (ctx *ValidationContext) verifySignedInfo(sig *types.Signature, canonicaliz
 }
 
 func (ctx *ValidationContext) validateSignature(el *etree.Element, sig *types.Signature, cert *x509.Certificate) (*etree.Element, error) {
-	idAttr := el.SelectAttr(ctx.IdAttribute)
-	if idAttr == nil || idAttr.Value == "" {
-		return nil, errors.New("Missing ID attribute")
+	var idAttr *etree.Attr
+	if ctx.IdAttribute != "" {
+		idAttr = el.SelectAttr(ctx.IdAttribute)
+		if idAttr == nil || idAttr.Value == "" {
+			return nil, errors.New("Missing ID attribute")
+		}
+	} else {
+		idAttr = &emptyAttr
 	}
 
 	var ref *types.Reference
@@ -298,9 +304,14 @@ func contains(roots []*x509.Certificate, cert *x509.Certificate) bool {
 
 // findSignature searches for a Signature element referencing the passed root element.
 func (ctx *ValidationContext) findSignature(el *etree.Element) (*types.Signature, error) {
-	idAttr := el.SelectAttr(ctx.IdAttribute)
-	if idAttr == nil || idAttr.Value == "" {
-		return nil, errors.New("Missing ID attribute")
+	var idAttr *etree.Attr
+	if ctx.IdAttribute != "" {
+		idAttr := el.SelectAttr(ctx.IdAttribute)
+		if idAttr == nil || idAttr.Value == "" {
+			return nil, errors.New("Missing ID attribute")
+		}
+	} else {
+		idAttr = &emptyAttr
 	}
 
 	var sig *types.Signature
